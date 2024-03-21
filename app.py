@@ -14,6 +14,7 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 model = tf.keras.models.load_model("model.h5")
+display_labels1=['area','heatmap','horizontal_bar','horizontal_interval','line','manhattan','map','pie','scatter','scatter-line','surface','venn','vertical_bar','vertical_box','vertical_interval']
 
 print("sadsff")
 
@@ -65,14 +66,21 @@ def upload_file():
             predictions = model.predict(img_array)
             predictions_list = predictions.tolist()
             
-            print(predictions_list)
+            predictions_array = np.array(predictions_list)
+
+# Find the index of the maximum probability
+            max_prob_index = np.argmax(predictions_array)
+            predicted_label = display_labels1[max_prob_index]
+
+            
+            print(predicted_label)
 
             # Convert predictions to a human-readable format
             # (e.g., class labels, probabilities)
             # processed_output = process_predictions(predictions)
 
             # Return the processed output as JSON response
-            return jsonify({'result': predictions_list})
+            return jsonify({'class': predicted_label})
         else:
             return 'Invalid file format'
     except Exception as e:
