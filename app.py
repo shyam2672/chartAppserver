@@ -39,7 +39,6 @@ def preprocess_image(image):
 def index():
     return "ffff"
 
-
 @app.route('/upload', methods=['POST'])
 def upload_file():
     try:
@@ -51,7 +50,10 @@ def upload_file():
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = file.filename
-            # filename = secure_filename(file.filename)
+            # Create the uploads folder if it doesn't exist
+            if not os.path.exists(app.config['UPLOAD_FOLDER']):
+                os.makedirs(app.config['UPLOAD_FOLDER'])
+            
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(filepath)
             print(filename)
@@ -68,11 +70,10 @@ def upload_file():
             
             predictions_array = np.array(predictions_list)
 
-# Find the index of the maximum probability
+            # Find the index of the maximum probability
             max_prob_index = np.argmax(predictions_array)
             predicted_label = display_labels1[max_prob_index]
 
-            
             print(predicted_label)
 
             # Convert predictions to a human-readable format
